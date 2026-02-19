@@ -13,7 +13,7 @@ export interface UserData {
   name: string;
   email: string;
   phone: string;
-  provider: 'google' | 'naver' | 'kakao';
+  provider: 'google' | 'naver' | 'kakao' | 'apple';
   profileImage?: string;
 }
 
@@ -42,6 +42,8 @@ export function UserProfile({
         return 'bg-green-500';
       case 'kakao':
         return 'bg-yellow-500';
+      case 'apple':
+        return 'bg-black';
       default:
         return 'bg-gray-500';
     }

@@ -381,7 +381,7 @@ export default function App() {
 
   // Auth handlers
   const handleLogin = (
-    provider: "google" | "naver" | "kakao",
+    provider: "google" | "naver" | "kakao" | "apple",
   ) => {
     // Mock login - in real app, this would integrate with actual OAuth
     const mockUser: UserData = {
@@ -390,7 +390,9 @@ export default function App() {
           ? "김철수"
           : provider === "naver"
             ? "이영희"
-            : "박민수",
+            : provider === "apple"
+              ? "정수진"
+              : "박민수",
       email: `user@${provider}.com`,
       phone: "010-1234-5678",
       provider,
@@ -399,7 +401,7 @@ export default function App() {
     localStorage.setItem("user", JSON.stringify(mockUser));
     setShowLoginModal(false);
     toast.success(
-      `${provider === "google" ? "구글" : provider === "naver" ? "네이버" : "카카오"}로 로그했습니다`,
+      `${provider === "google" ? "구글" : provider === "naver" ? "네이버" : provider === "apple" ? "애플" : "카카오"}로 로그인했습니다`,
     );
   };
 
@@ -575,7 +577,7 @@ export default function App() {
     if (!selectedRoomId) {
       toast.info("먼저 객실을 선택해주세요", {
         description:
-          "좌���에서 원하는 객실을 클릭한 후 날짜를 선택하세요",
+          "좌측에서 원하는 객실을 클릭한 후 날짜를 선택하세요",
       });
       return;
     }
