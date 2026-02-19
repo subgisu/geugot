@@ -5,23 +5,9 @@ import { Button } from '@/app/components/ui/button';
 import { Input } from '@/app/components/ui/input';
 import { Badge } from '@/app/components/ui/badge';
 import { DealCard } from '@/app/components/deal-card';
+import type { Deal } from '@/app/types';
 
-export interface Deal {
-  id: string;
-  name: string;
-  type: 'hotel' | 'pension' | 'motel';
-  distance: number; // km
-  originalPrice: number;
-  discountedPrice: number;
-  discountRate: number;
-  rating: number;
-  reviewCount: number;
-  image: string;
-  amenities: string[];
-  checkInTime: string;
-  checkOutTime: string;
-  location: string;
-}
+export type { Deal };
 
 interface DealsPageProps {
   deals: Deal[];

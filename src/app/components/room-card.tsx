@@ -3,16 +3,9 @@ import { useDrag } from 'react-dnd';
 import { Card, CardContent } from '@/app/components/ui/card';
 import { Info, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/app/components/ui/button';
+import type { Room } from '@/app/types';
 
-export interface Room {
-  id: string;
-  name: string;
-  images: string[];
-  capacity: number;
-  amenities: string[];
-  price: number;
-  color: string;
-}
+export type { Room };
 
 interface RoomCardProps {
   room: Room;

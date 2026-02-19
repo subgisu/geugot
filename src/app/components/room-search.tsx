@@ -1,12 +1,8 @@
 import { useState } from "react";
 import { Search, SlidersHorizontal, X } from "lucide-react";
+import type { RoomSearchFilters } from "@/app/types";
 
-export interface RoomSearchFilters {
-  keyword: string;
-  minCapacity: number;
-  maxPrice: number;
-  amenities: string[];
-}
+export type { RoomSearchFilters };
 
 interface RoomSearchProps {
   onSearch: (filters: RoomSearchFilters) => void;

@@ -11,19 +11,9 @@ import { Button } from '@/app/components/ui/button';
 import { ScrollArea } from '@/app/components/ui/scroll-area';
 import { Badge } from '@/app/components/ui/badge';
 import { Bell, Tag, MapPin, Trash2 } from 'lucide-react';
+import type { Notification } from '@/app/types';
 
-export interface Notification {
-  id: string;
-  type: 'new_deal' | 'price_drop' | 'last_minute';
-  title: string;
-  message: string;
-  dealName: string;
-  price: number;
-  discount: number;
-  distance: number;
-  timestamp: Date;
-  read: boolean;
-}
+export type { Notification };
 
 interface NotificationsModalProps {
   isOpen: boolean;

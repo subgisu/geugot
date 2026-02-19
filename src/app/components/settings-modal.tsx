@@ -10,20 +10,9 @@ import { Button } from '@/app/components/ui/button';
 import { Label } from '@/app/components/ui/label';
 import { Switch } from '@/app/components/ui/switch';
 import { Slider } from '@/app/components/ui/slider';
+import type { UserSettings } from '@/app/types';
 
-export interface UserSettings {
-  searchRadius: number; // km
-  notificationsEnabled: boolean;
-  preferredTypes: {
-    hotel: boolean;
-    pension: boolean;
-    motel: boolean;
-  };
-  priceRange: {
-    min: number;
-    max: number;
-  };
-}
+export type { UserSettings };
 
 interface SettingsModalProps {
   isOpen: boolean;

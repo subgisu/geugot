@@ -5,19 +5,9 @@ import { ko } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/app/components/ui/button';
 import { Card } from '@/app/components/ui/card';
-import type { Room } from './room-card';
-import type { Deal } from './deals-page';
+import type { Room, Deal, Booking } from '@/app/types';
 
-export interface Booking {
-  id: string;
-  roomId: string;
-  roomName: string;
-  checkIn: Date;
-  checkOut: Date;
-  guestName: string;
-  contact: string;
-  color?: string;
-}
+export type { Booking };
 
 interface BookingCalendarProps {
   bookings: Booking[];

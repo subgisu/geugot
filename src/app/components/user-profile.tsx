@@ -8,14 +8,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/app/components/ui/dropdown-menu';
+import type { UserData } from '@/app/types';
 
-export interface UserData {
-  name: string;
-  email: string;
-  phone: string;
-  provider: 'google' | 'naver' | 'kakao' | 'apple';
-  profileImage?: string;
-}
+export type { UserData };
 
 interface UserProfileProps {
   user: UserData;
