@@ -1,0 +1,1909 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>숙소 예약 시스템</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(to bottom right, #eff6ff, #e0e7ff);
+      min-height: 100vh;
+    }
+
+    /* Login Screen */
+    .login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .login-card {
+      max-width: 448px;
+      width: 100%;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      padding: 32px;
+      text-align: center;
+    }
+
+    .login-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 16px;
+      color: #2563eb;
+    }
+
+    .login-title {
+      font-size: 30px;
+      font-weight: bold;
+      color: #111827;
+      margin-bottom: 8px;
+    }
+
+    .login-desc {
+      color: #6b7280;
+      margin-bottom: 24px;
+    }
+
+    .login-btn {
+      width: 100%;
+      background: #2563eb;
+      color: white;
+      font-weight: 600;
+      padding: 12px 24px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .login-btn:hover {
+      background: #1d4ed8;
+    }
+
+    /* Header */
+    header {
+      background: white;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+
+    .header-content {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-title {
+      font-size: 24px;
+      font-weight: bold;
+      color: #111827;
+    }
+
+    .header-subtitle {
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .notification-btn {
+      position: relative;
+      padding: 8px;
+      border-radius: 9999px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .notification-btn:hover {
+      background: #f3f4f6;
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: #ef4444;
+      color: white;
+      border-radius: 9999px;
+      width: 18px;
+      height: 18px;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 9999px;
+      background: #3b82f6;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+
+    .logout-btn {
+      padding: 8px 16px;
+      background: #ef4444;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+
+    .logout-btn:hover {
+      background: #dc2626;
+    }
+
+    /* Main Content */
+    .main-content {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    /* Tabs */
+    .tabs {
+      width: 100%;
+    }
+
+    .tabs-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      max-width: 448px;
+      gap: 4px;
+      background: #f3f4f6;
+      border-radius: 8px;
+      padding: 4px;
+      margin-bottom: 24px;
+    }
+
+    .tab-trigger {
+      padding: 8px 16px;
+      background: transparent;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .tab-trigger.active {
+      background: white;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Grid Layout */
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    @media (min-width: 1024px) {
+      .grid-layout {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    /* Room Card */
+    .room-card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+      border: 2px solid transparent;
+    }
+
+    .room-card:hover {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .room-card.selected {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .room-card.dimmed {
+      opacity: 0.5;
+    }
+
+    .room-card.dragging {
+      opacity: 0.5;
+      cursor: grabbing;
+    }
+
+    .room-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .room-card-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .info-btn {
+      padding: 6px;
+      background: #f3f4f6;
+      border: none;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .info-btn:hover {
+      background: #e5e7eb;
+    }
+
+    .room-card-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+
+    .room-card-details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .room-card-price {
+      font-size: 20px;
+      font-weight: bold;
+      color: #111827;
+    }
+
+    /* Deal Card */
+    .deal-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 16px;
+    }
+
+    .deal-card:hover {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .deal-card.dragging {
+      opacity: 0.5;
+      cursor: grabbing;
+    }
+
+    .deal-card-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .deal-card-content {
+      padding: 16px;
+    }
+
+    .deal-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .deal-card-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .deal-badge {
+      background: #ef4444;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .deal-rating {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 14px;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
+
+    .deal-distance {
+      font-size: 14px;
+      color: #6b7280;
+      margin-bottom: 12px;
+    }
+
+    .deal-price {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .deal-original-price {
+      text-decoration: line-through;
+      color: #9ca3af;
+      font-size: 16px;
+    }
+
+    .deal-discounted-price {
+      font-size: 24px;
+      font-weight: bold;
+      color: #ef4444;
+    }
+
+    /* Calendar */
+    .calendar {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .calendar-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .calendar-nav {
+      display: flex;
+      gap: 8px;
+    }
+
+    .calendar-nav-btn {
+      padding: 8px;
+      background: #f3f4f6;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .calendar-nav-btn:hover {
+      background: #e5e7eb;
+    }
+
+    .calendar-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      margin-bottom: 4px;
+    }
+
+    .calendar-weekday {
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      color: #6b7280;
+      padding: 8px 0;
+    }
+
+    .calendar-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+
+    .calendar-day {
+      aspect-ratio: 1;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      min-height: 60px;
+    }
+
+    .calendar-day:hover {
+      background: #f3f4f6;
+    }
+
+    .calendar-day.drag-over {
+      background: #dbeafe;
+      border-color: #3b82f6;
+    }
+
+    .calendar-day.other-month {
+      color: #d1d5db;
+    }
+
+    .calendar-day.past {
+      background: #f9fafb;
+      cursor: not-allowed;
+    }
+
+    .calendar-day-number {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .booking-bar {
+      position: absolute;
+      bottom: 2px;
+      left: 2px;
+      right: 2px;
+      height: 6px;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    .booking-bar:hover {
+      height: 8px;
+      bottom: 1px;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal {
+      background: white;
+      border-radius: 16px;
+      max-width: 600px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      padding: 20px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      padding: 8px;
+      background: transparent;
+      border: none;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .modal-close:hover {
+      background: #f3f4f6;
+    }
+
+    .modal-content {
+      padding: 20px;
+    }
+
+    .modal-footer {
+      padding: 20px;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    /* Form */
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: #374151;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .form-input:read-only {
+      background: #f9fafb;
+      cursor: not-allowed;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      font-size: 14px;
+    }
+
+    .btn-primary {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #2563eb;
+    }
+
+    .btn-secondary {
+      background: #6b7280;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #4b5563;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    /* Social Login */
+    .social-login-btn {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+
+    .social-login-btn:hover {
+      background: #f9fafb;
+      border-color: #9ca3af;
+    }
+
+    .social-login-btn.google {
+      border-color: #4285f4;
+      color: #4285f4;
+    }
+
+    .social-login-btn.naver {
+      background: #03c75a;
+      color: white;
+      border-color: #03c75a;
+    }
+
+    .social-login-btn.kakao {
+      background: #fee500;
+      color: #000000;
+      border-color: #fee500;
+    }
+
+    /* Image Carousel */
+    .carousel {
+      position: relative;
+      width: 100%;
+      height: 300px;
+      margin-bottom: 16px;
+    }
+
+    .carousel-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      border-radius: 9999px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .carousel-btn:hover {
+      background: white;
+    }
+
+    .carousel-btn.prev {
+      left: 12px;
+    }
+
+    .carousel-btn.next {
+      right: 12px;
+    }
+
+    .carousel-dots {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+    }
+
+    .carousel-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .carousel-dot.active {
+      background: white;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #111827;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      z-index: 100;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .toast.success {
+      background: #10b981;
+    }
+
+    .toast.error {
+      background: #ef4444;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    /* Amenities */
+    .amenities-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .amenity-tag {
+      padding: 6px 12px;
+      background: #f3f4f6;
+      border-radius: 16px;
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    /* Utilities */
+    .hidden {
+      display: none !important;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .mt-4 {
+      margin-top: 16px;
+    }
+
+    .mb-4 {
+      margin-bottom: 16px;
+    }
+
+    /* Notification */
+    .notification-item {
+      padding: 16px;
+      border-bottom: 1px solid #e5e7eb;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .notification-item:hover {
+      background: #f9fafb;
+    }
+
+    .notification-item.unread {
+      background: #eff6ff;
+    }
+
+    .notification-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .notification-message {
+      font-size: 14px;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
+
+    .notification-meta {
+      font-size: 12px;
+      color: #9ca3af;
+    }
+
+    /* Settings */
+    .settings-section {
+      margin-bottom: 24px;
+    }
+
+    .settings-label {
+      font-weight: 600;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .checkbox-input {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    /* Responsive */
+    @media (max-width: 1023px) {
+      .desktop-only {
+        display: none !important;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .mobile-only {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Login Screen -->
+  <div id="loginScreen" class="login-screen">
+    <div class="login-card">
+      <div class="login-icon">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+      </div>
+      <h1 class="login-title">숙소 예약 시스템</h1>
+      <p class="login-desc">주변 특가 숙소를 찾고 간편하게 예약하세요</p>
+      <button class="login-btn" onclick="showLoginModal()">로그인하고 시작하기</button>
+    </div>
+  </div>
+
+  <!-- Main App -->
+  <div id="app" class="hidden">
+    <!-- Header -->
+    <header>
+      <div class="header-content">
+        <div>
+          <h1 class="header-title">숙소 예약 시스템</h1>
+          <p class="header-subtitle" id="headerSubtitle">주변 5km 내 특가 검색</p>
+        </div>
+        <div class="user-profile">
+          <button class="notification-btn" onclick="showNotificationsModal()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            <span id="notificationBadge" class="notification-badge hidden">0</span>
+          </button>
+          <button class="notification-btn" onclick="showSettingsModal()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M12 1v6m0 6v6M5.636 5.636l4.243 4.243m4.242 4.242l4.243 4.243M1 12h6m6 0h6M5.636 18.364l4.243-4.243m4.242-4.242l4.243-4.243"></path>
+            </svg>
+          </button>
+          <div class="user-avatar" id="userAvatar">K</div>
+          <button class="logout-btn" onclick="logout()">로그아웃</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="tabs">
+        <!-- Tabs List -->
+        <div class="tabs-list">
+          <button class="tab-trigger active" data-tab="booking" onclick="switchTab('booking')">예약 관리</button>
+          <button class="tab-trigger" data-tab="deals" onclick="switchTab('deals')">주변 특가</button>
+        </div>
+
+        <!-- Booking Tab -->
+        <div id="booking-tab" class="tab-content active">
+          <div class="grid-layout">
+            <!-- Room Cards -->
+            <div>
+              <h2 class="section-title">객실 목록</h2>
+              <div id="roomsList"></div>
+            </div>
+
+            <!-- Calendar (Desktop) -->
+            <div class="desktop-only">
+              <h2 class="section-title">예약 현황</h2>
+              <div id="bookingCalendar" class="calendar"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Deals Tab -->
+        <div id="deals-tab" class="tab-content">
+          <div class="grid-layout">
+            <!-- Deals List -->
+            <div>
+              <h2 class="section-title">주변 특가 숙소</h2>
+              <div id="dealsList"></div>
+            </div>
+
+            <!-- Calendar (Desktop) -->
+            <div class="desktop-only">
+              <h2 class="section-title">예약 현황</h2>
+              <div id="dealsCalendar" class="calendar"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer"></div>
+
+  <script>
+    // Global State
+    let currentUser = null;
+    let settings = {
+      searchRadius: 5,
+      notificationsEnabled: true,
+      preferredTypes: { hotel: true, pension: true, motel: true },
+      priceRange: { min: 0, max: 500000 }
+    };
+    let bookings = [];
+    let notifications = [
+      {
+        id: 'n1',
+        type: 'price_drop',
+        title: '가격이 떨어졌어요!',
+        message: '관심있으신 숙소의 가격이 인하되었습니다.',
+        dealName: '그랜드 호텔 서울',
+        price: 120000,
+        discount: 40,
+        distance: 2.3,
+        timestamp: new Date(Date.now() - 1000 * 60 * 30),
+        read: false
+      },
+      {
+        id: 'n2',
+        type: 'new_deal',
+        title: '새로운 특가!',
+        message: '주변에 새로운 특가 숙소가 등록되었습니다.',
+        dealName: '오션뷰 펜션',
+        price: 99000,
+        discount: 34,
+        distance: 4.7,
+        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2),
+        read: false
+      }
+    ];
+    let selectedRoomId = null;
+    let currentMonth = new Date();
+    let draggedItem = null;
+
+    // Mock Data
+    const ROOMS = [
+      {
+        id: '101',
+        name: '101호 - 럭셔리 스위트',
+        images: [
+          'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=1080',
+          'https://images.unsplash.com/photo-1731336478850-6bce7235e320?w=1080'
+        ],
+        capacity: 4,
+        amenities: ['킹사이즈 침대', '개별 욕조', '발코니', 'WiFi', '미니바'],
+        price: 250000,
+        color: '#3788d8'
+      },
+      {
+        id: '102',
+        name: '102호 - 모던 디럭스',
+        images: [
+          'https://images.unsplash.com/photo-1668089677938-b52086753f77?w=1080'
+        ],
+        capacity: 3,
+        amenities: ['퀸사이즈 침대', '샤워부스', 'WiFi', '업무용 책상'],
+        price: 180000,
+        color: '#10b981'
+      },
+      {
+        id: '103',
+        name: '103호 - 코지 캐빈',
+        images: [
+          'https://images.unsplash.com/photo-1645242075656-e4e435b7a5f5?w=1080'
+        ],
+        capacity: 2,
+        amenities: ['더블침대', '벽난로', 'WiFi', '테라스'],
+        price: 150000,
+        color: '#f59e0b'
+      },
+      {
+        id: '104',
+        name: '104호 - 파노라마 뷰',
+        images: [
+          'https://images.unsplash.com/photo-1761416376095-c2b89d845c50?w=1080'
+        ],
+        capacity: 4,
+        amenities: ['킹사이즈 침대', '전망 욕조', '대형 창문', 'WiFi', '소파'],
+        price: 300000,
+        color: '#8b5cf6'
+      }
+    ];
+
+    const DEALS = [
+      {
+        id: 'd1',
+        name: '그랜드 호텔 서울',
+        type: 'hotel',
+        distance: 2.3,
+        originalPrice: 200000,
+        discountedPrice: 120000,
+        discountRate: 40,
+        rating: 4.8,
+        reviewCount: 1234,
+        image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1080',
+        amenities: ['무료 WiFi', '조식 포함', '피트니스', '주차장', '수영장'],
+        checkInTime: '15:00',
+        checkOutTime: '11:00',
+        location: '서울 강남구'
+      },
+      {
+        id: 'd2',
+        name: '오션뷰 펜션',
+        type: 'pension',
+        distance: 4.7,
+        originalPrice: 150000,
+        discountedPrice: 99000,
+        discountRate: 34,
+        rating: 4.6,
+        reviewCount: 567,
+        image: 'https://images.unsplash.com/photo-1602002418082-a4443e081dd1?w=1080',
+        amenities: ['바다 전망', 'BBQ 시설', '주방', '주차장'],
+        checkInTime: '14:00',
+        checkOutTime: '12:00',
+        location: '강원도 속초시'
+      },
+      {
+        id: 'd3',
+        name: '비즈니스 모텔',
+        type: 'motel',
+        distance: 1.5,
+        originalPrice: 80000,
+        discountedPrice: 55000,
+        discountRate: 31,
+        rating: 4.2,
+        reviewCount: 234,
+        image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=1080',
+        amenities: ['무료 WiFi', '주차장', '24시간 체크인'],
+        checkInTime: '18:00',
+        checkOutTime: '12:00',
+        location: '서울 마포구'
+      }
+    ];
+
+    // Initialize
+    window.addEventListener('DOMContentLoaded', () => {
+      loadFromStorage();
+      checkAuth();
+    });
+
+    function loadFromStorage() {
+      const savedUser = localStorage.getItem('user');
+      if (savedUser) currentUser = JSON.parse(savedUser);
+
+      const savedSettings = localStorage.getItem('settings');
+      if (savedSettings) settings = JSON.parse(savedSettings);
+
+      const savedBookings = localStorage.getItem('bookings');
+      if (savedBookings) bookings = JSON.parse(savedBookings).map(b => ({
+        ...b,
+        checkIn: new Date(b.checkIn),
+        checkOut: new Date(b.checkOut)
+      }));
+    }
+
+    function checkAuth() {
+      if (currentUser) {
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('app').classList.remove('hidden');
+        initApp();
+      } else {
+        document.getElementById('loginScreen').classList.remove('hidden');
+        document.getElementById('app').classList.add('hidden');
+      }
+    }
+
+    function initApp() {
+      updateUserProfile();
+      updateNotificationBadge();
+      renderRooms();
+      renderDeals();
+      renderCalendar('bookingCalendar');
+      renderCalendar('dealsCalendar');
+    }
+
+    function updateUserProfile() {
+      if (currentUser) {
+        const avatar = document.getElementById('userAvatar');
+        avatar.textContent = currentUser.name.charAt(0);
+        document.getElementById('headerSubtitle').textContent = 
+          `주변 ${settings.searchRadius}km 내 특가 검색`;
+      }
+    }
+
+    function updateNotificationBadge() {
+      const unread = notifications.filter(n => !n.read).length;
+      const badge = document.getElementById('notificationBadge');
+      if (unread > 0) {
+        badge.textContent = unread;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+
+    // Login Modal
+    function showLoginModal() {
+      const modalHTML = `
+        <div class="modal-overlay" onclick="closeModal(event)">
+          <div class="modal">
+            <div class="modal-header">
+              <h2 class="modal-title">로그인</h2>
+              <button class="modal-close" onclick="closeModal()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+            <div class="modal-content">
+              <button class="social-login-btn google" onclick="login('google')">
+                <svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                구글로 로그인
+              </button>
+              <button class="social-login-btn naver" onclick="login('naver')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M16.273 12.845L7.376 0H0v24h7.726V11.156L16.624 24H24V0h-7.727v12.845z"/></svg>
+                네이버로 로그인
+              </button>
+              <button class="social-login-btn kakao" onclick="login('kakao')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c5.799 0 10.5 3.664 10.5 8.185 0 4.52-4.701 8.184-10.5 8.184a13.5 13.5 0 0 1-1.727-.11l-4.408 2.883c-.501.265-.678.236-.472-.413l.892-3.678c-2.88-1.46-4.785-3.99-4.785-6.866C1.5 6.665 6.201 3 12 3z"/></svg>
+                카카오로 로그인
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+    }
+
+    function login(provider) {
+      const names = { google: '김철수', naver: '이영희', kakao: '박민수' };
+      currentUser = {
+        name: names[provider],
+        email: `user@${provider}.com`,
+        phone: '010-1234-5678',
+        provider
+      };
+      localStorage.setItem('user', JSON.stringify(currentUser));
+      closeModal();
+      showToast(`${provider === 'google' ? '구글' : provider === 'naver' ? '네이버' : '카카오'}로 로그인했습니다`, 'success');
+      checkAuth();
+    }
+
+    function logout() {
+      currentUser = null;
+      localStorage.removeItem('user');
+      showToast('로그아웃했습니다', 'success');
+      checkAuth();
+    }
+
+    // Tab Switching
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-trigger').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tabName);
+      });
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.toggle('active', content.id === `${tabName}-tab`);
+      });
+    }
+
+    // Render Rooms
+    function renderRooms() {
+      const container = document.getElementById('roomsList');
+      container.innerHTML = ROOMS.map(room => `
+        <div class="room-card ${selectedRoomId === room.id ? 'selected' : ''} 
+                    ${selectedRoomId && selectedRoomId !== room.id ? 'dimmed' : ''}"
+             draggable="true"
+             data-room-id="${room.id}"
+             onclick="selectRoom('${room.id}')"
+             ondragstart="handleDragStart(event, 'room', '${room.id}')"
+             ondragend="handleDragEnd(event)">
+          <div class="room-card-header">
+            <h3 class="room-card-title">${room.name}</h3>
+            <button class="info-btn" onclick="event.stopPropagation(); showRoomDetail('${room.id}')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+            </button>
+          </div>
+          <img src="${room.images[0]}" alt="${room.name}" class="room-card-image">
+          <div class="room-card-details">
+            <span>👥 최대 ${room.capacity}인</span>
+            <span>🛏️ ${room.amenities[0]}</span>
+          </div>
+          <div class="room-card-price">${room.price.toLocaleString()}원/박</div>
+        </div>
+      `).join('');
+    }
+
+    // Render Deals
+    function renderDeals() {
+      const container = document.getElementById('dealsList');
+      container.innerHTML = DEALS.map(deal => `
+        <div class="deal-card"
+             draggable="true"
+             data-deal-id="${deal.id}"
+             onclick="showDealDetail('${deal.id}')"
+             ondragstart="handleDragStart(event, 'deal', '${deal.id}')"
+             ondragend="handleDragEnd(event)">
+          <img src="${deal.image}" alt="${deal.name}" class="deal-card-image">
+          <div class="deal-card-content">
+            <div class="deal-card-header">
+              <h3 class="deal-card-title">${deal.name}</h3>
+              <span class="deal-badge">${deal.discountRate}%</span>
+            </div>
+            <div class="deal-rating">
+              ⭐ ${deal.rating} (${deal.reviewCount.toLocaleString()})</div>
+            <div class="deal-distance">📍 ${deal.distance}km</div>
+            <div class="deal-price">
+              <span class="deal-original-price">${deal.originalPrice.toLocaleString()}원</span>
+              <span class="deal-discounted-price">${deal.discountedPrice.toLocaleString()}원</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Room Selection
+    function selectRoom(roomId) {
+      if (selectedRoomId === roomId) {
+        selectedRoomId = null;
+      } else {
+        selectedRoomId = roomId;
+      }
+      renderRooms();
+      renderCalendar('bookingCalendar');
+    }
+
+    // Drag and Drop
+    function handleDragStart(event, type, id) {
+      event.target.classList.add('dragging');
+      draggedItem = { type, id };
+      if (type === 'room') {
+        draggedItem.data = ROOMS.find(r => r.id === id);
+      } else {
+        draggedItem.data = DEALS.find(d => d.id === id);
+      }
+    }
+
+    function handleDragEnd(event) {
+      event.target.classList.remove('dragging');
+      draggedItem = null;
+    }
+
+    function handleDragOver(event) {
+      event.preventDefault();
+      event.currentTarget.classList.add('drag-over');
+    }
+
+    function handleDragLeave(event) {
+      event.currentTarget.classList.remove('drag-over');
+    }
+
+    function handleDrop(event, date) {
+      event.preventDefault();
+      event.currentTarget.classList.remove('drag-over');
+      
+      if (!draggedItem) return;
+
+      if (draggedItem.type === 'room') {
+        const room = draggedItem.data;
+        if (selectedRoomId && room.id !== selectedRoomId) {
+          showToast('필터링 모드에서는 선택한 객실만 예약할 수 있습니다', 'error');
+          return;
+        }
+        if (hasBooking(room.id, date)) {
+          showToast('이미 예약된 날짜입니다', 'error');
+          return;
+        }
+        showBookingForm(room, date);
+      } else if (draggedItem.type === 'deal') {
+        const deal = draggedItem.data;
+        const room = {
+          id: deal.id,
+          name: deal.name,
+          images: [deal.image],
+          capacity: 2,
+          amenities: deal.amenities,
+          price: deal.discountedPrice,
+          color: '#3b82f6'
+        };
+        showBookingForm(room, date);
+      }
+    }
+
+    // Calendar
+    function renderCalendar(elementId) {
+      const container = document.getElementById(elementId);
+      const year = currentMonth.getFullYear();
+      const month = currentMonth.getMonth();
+      
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const startDate = new Date(firstDay);
+      startDate.setDate(startDate.getDate() - firstDay.getDay());
+      
+      const days = [];
+      const current = new Date(startDate);
+      
+      while (current <= lastDay || current.getDay() !== 0) {
+        days.push(new Date(current));
+        current.setDate(current.getDate() + 1);
+      }
+
+      const monthNames = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
+      
+      container.innerHTML = `
+        <div class="calendar-header">
+          <h3 class="calendar-title">${year}년 ${monthNames[month]}</h3>
+          <div class="calendar-nav">
+            <button class="calendar-nav-btn" onclick="changeMonth(-1)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+            </button>
+            <button class="calendar-nav-btn" onclick="changeMonth(1)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="calendar-weekdays">
+          <div class="calendar-weekday">일</div>
+          <div class="calendar-weekday">월</div>
+          <div class="calendar-weekday">화</div>
+          <div class="calendar-weekday">수</div>
+          <div class="calendar-weekday">목</div>
+          <div class="calendar-weekday">금</div>
+          <div class="calendar-weekday">토</div>
+        </div>
+        <div class="calendar-days">
+          ${days.map(day => {
+            const isOtherMonth = day.getMonth() !== month;
+            const isPast = day < new Date(new Date().setHours(0, 0, 0, 0));
+            const dayBookings = getBookingsForDate(day);
+            
+            return `
+              <div class="calendar-day ${isOtherMonth ? 'other-month' : ''} ${isPast ? 'past' : ''}"
+                   data-date="${day.toISOString()}"
+                   onclick="handleDateClick('${day.toISOString()}')"
+                   ondragover="handleDragOver(event)"
+                   ondragleave="handleDragLeave(event)"
+                   ondrop="handleDrop(event, new Date('${day.toISOString()}'))">
+                <span class="calendar-day-number">${day.getDate()}</span>
+                ${dayBookings.map(booking => `
+                  <div class="booking-bar" style="background: ${booking.color};"
+                       onclick="event.stopPropagation(); showBookingEdit('${booking.id}')"
+                       title="${booking.roomName} - ${booking.guestName}"></div>
+                `).join('')}
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    function changeMonth(delta) {
+      currentMonth.setMonth(currentMonth.getMonth() + delta);
+      renderCalendar('bookingCalendar');
+      renderCalendar('dealsCalendar');
+    }
+
+    function handleDateClick(dateStr) {
+      const date = new Date(dateStr);
+      
+      if (!selectedRoomId) {
+        showToast('먼저 객실을 선택해주세요', 'error');
+        return;
+      }
+
+      const room = ROOMS.find(r => r.id === selectedRoomId);
+      if (!room) return;
+
+      if (hasBooking(room.id, date)) {
+        showToast('이미 예약된 날짜입니다', 'error');
+        return;
+      }
+
+      showBookingForm(room, date);
+    }
+
+    function getBookingsForDate(date) {
+      return bookings.filter(booking => {
+        const checkIn = new Date(booking.checkIn);
+        const checkOut = new Date(booking.checkOut);
+        checkIn.setHours(0, 0, 0, 0);
+        checkOut.setHours(0, 0, 0, 0);
+        const currentDate = new Date(date);
+        currentDate.setHours(0, 0, 0, 0);
+        
+        if (selectedRoomId && booking.roomId !== selectedRoomId) return false;
+        
+        return currentDate >= checkIn && currentDate < checkOut;
+      });
+    }
+
+    function hasBooking(roomId, date) {
+      return bookings.some(booking => {
+        if (booking.roomId !== roomId) return false;
+        
+        const checkIn = new Date(booking.checkIn);
+        const checkOut = new Date(booking.checkOut);
+        checkIn.setHours(0, 0, 0, 0);
+        checkOut.setHours(0, 0, 0, 0);
+        const currentDate = new Date(date);
+        currentDate.setHours(0, 0, 0, 0);
+        
+        return currentDate >= checkIn && currentDate < checkOut;
+      });
+    }
+
+    // Booking Form Modal
+    function showBookingForm(room, date) {
+      const checkIn = new Date(date);
+      const checkOut = new Date(date);
+      checkOut.setDate(checkOut.getDate() + 1);
+
+      const modalHTML = `
+        <div class="modal-overlay" onclick="closeModal(event)">
+          <div class="modal">
+            <div class="modal-header">
+              <h2 class="modal-title">예약하기</h2>
+              <button class="modal-close" onclick="closeModal()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+            <div class="modal-content">
+              <div class="form-group">
+                <label class="form-label">객실</label>
+                <input type="text" class="form-input" value="${room.name}" readonly>
+              </div>
+              <div class="form-group">
+                <label class="form-label">투숙객 이름</label>
+                <input type="text" id="guestName" class="form-input" placeholder="이름을 입력하세요">
+              </div>
+              <div class="form-group">
+                <label class="form-label">연락처</label>
+                <input type="tel" id="guestContact" class="form-input" placeholder="010-1234-5678">
+              </div>
+              <div class="form-group">
+                <label class="form-label">체크인</label>
+                <input type="date" id="checkInDate" class="form-input" value="${checkIn.toISOString().split('T')[0]}">
+              </div>
+              <div class="form-group">
+                <label class="form-label">체크아웃</label>
+                <input type="date" id="checkOutDate" class="form-input" value="${checkOut.toISOString().split('T')[0]}">
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-secondary" onclick="closeModal()">취소</button>
+              <button class="btn btn-primary" onclick="submitBooking('${room.id}', '${room.name}', '${room.color}')">예약 확정</button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+    }
+
+    function submitBooking(roomId, roomName, color) {
+      const guestName = document.getElementById('guestName').value;
+      const contact = document.getElementById('guestContact').value;
+      const checkIn = new Date(document.getElementById('checkInDate').value);
+      const checkOut = new Date(document.getElementById('checkOutDate').value);
+
+      if (!guestName || !contact) {
+        showToast('모든 필드를 입력해주세요', 'error');
+        return;
+      }
+
+      const newBooking = {
+        id: Date.now().toString(),
+        roomId,
+        roomName,
+        checkIn,
+        checkOut,
+        guestName,
+        contact,
+        color
+      };
+
+      bookings.push(newBooking);
+      localStorage.setItem('bookings', JSON.stringify(bookings));
+      
+      closeModal();
+      showToast('예약이 완료되었습니다', 'success');
+      renderCalendar('bookingCalendar');
+      renderCalendar('dealsCalendar');
+    }
+
+    // Booking Edit Modal
+    function showBookingEdit(bookingId) {
+      const booking = bookings.find(b => b.id === bookingId);
+      if (!booking) return;
+
+      const modalHTML = `
+        <div class="modal-overlay" onclick="closeModal(event)">
+          <div class="modal">
+            <div class="modal-header">
+              <h2 class="modal-title">예약 수정</h2>
+              <button class="modal-close" onclick="closeModal()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+            <div class="modal-content">
+              <div class="form-group">
+                <label class="form-label">객실</label>
+                <input type="text" class="form-input" value="${booking.roomName}" readonly>
+              </div>
+              <div class="form-group">
+                <label class="form-label">투숙객 이름</label>
+                <input type="text" id="editGuestName" class="form-input" value="${booking.guestName}">
+              </div>
+              <div class="form-group">
+                <label class="form-label">연락처</label>
+                <input type="tel" id="editGuestContact" class="form-input" value="${booking.contact}">
+              </div>
+              <div class="form-group">
+                <label class="form-label">체크인</label>
+                <input type="date" id="editCheckInDate" class="form-input" 
+                       value="${new Date(booking.checkIn).toISOString().split('T')[0]}">
+              </div>
+              <div class="form-group">
+                <label class="form-label">체크아웃</label>
+                <input type="date" id="editCheckOutDate" class="form-input" 
+                       value="${new Date(booking.checkOut).toISOString().split('T')[0]}">
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-danger" onclick="cancelBooking('${booking.id}')">예약 취소</button>
+              <button class="btn btn-primary" onclick="updateBooking('${booking.id}')">수정 완료</button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+    }
+
+    function updateBooking(bookingId) {
+      const guestName = document.getElementById('editGuestName').value;
+      const contact = document.getElementById('editGuestContact').value;
+      const checkIn = new Date(document.getElementById('editCheckInDate').value);
+      const checkOut = new Date(document.getElementById('editCheckOutDate').value);
+
+      bookings = bookings.map(b => 
+        b.id === bookingId ? { ...b, guestName, contact, checkIn, checkOut } : b
+      );
+      
+      localStorage.setItem('bookings', JSON.stringify(bookings));
+      closeModal();
+      showToast('예약 정보가 수정되었습니다', 'success');
+      renderCalendar('bookingCalendar');
+      renderCalendar('dealsCalendar');
+    }
+
+    function cancelBooking(bookingId) {
+      if (!confirm('정말 예약을 취소하시겠습니까?')) return;
+      
+      bookings = bookings.filter(b => b.id !== bookingId);
+      localStorage.setItem('bookings', JSON.stringify(bookings));
+      closeModal();
+      showToast('예약이 취소되었습니다', 'success');
+      renderCalendar('bookingCalendar');
+      renderCalendar('dealsCalendar');
+    }
+
+    // Room Detail Modal
+    function showRoomDetail(roomId) {
+      const room = ROOMS.find(r => r.id === roomId);
+      if (!room) return;
+
+      let currentImageIndex = 0;
+
+      const modalHTML = `
+        <div class="modal-overlay" onclick="closeModal(event)">
+          <div class="modal">
+            <div class="modal-header">
+              <h2 class="modal-title">${room.name}</h2>
+              <button class="modal-close" onclick="closeModal()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+            <div class="modal-content">
+              <div class="carousel">
+                <img id="carouselImage" src="${room.images[0]}" alt="${room.name}" class="carousel-image">
+                ${room.images.length > 1 ? `
+                  <button class="carousel-btn prev" onclick="event.stopPropagation(); changeImage(-1, ${JSON.stringify(room.images).replace(/"/g, '&quot;')})">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                  </button>
+                  <button class="carousel-btn next" onclick="event.stopPropagation(); changeImage(1, ${JSON.stringify(room.images).replace(/"/g, '&quot;')})">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                  </button>
+                ` : ''}
+              </div>
+              <div>
+                <p><strong>수용 인원:</strong> 최대 ${room.capacity}인</p>
+                <p><strong>가격:</strong> ${room.price.toLocaleString()}원/박</p>
+                <div class="amenities-list">
+                  ${room.amenities.map(a => `<span class="amenity-tag">${a}</span>`).join('')}
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-secondary" onclick="closeModal()">닫기</button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+    }
+
+    let carouselIndex = 0;
+    function changeImage(delta, images) {
+      carouselIndex = (carouselIndex + delta + images.length) % images.length;
+      document.getElementById('carouselImage').src = images[carouselIndex];
+    }
+
+    // Deal Detail Modal
+    function showDealDetail(dealId) {
+      const deal = DEALS.find(d => d.id === dealId);
+      if (!deal) return;
+
+      const modalHTML = `
+        <div class="modal-overlay" onclick="closeModal(event)">
+          <div class="modal">
+            <div class="modal-header">
+              <h2 class="modal-title">${deal.name}</h2>
+              <button class="modal-close" onclick="closeModal()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+            <div class="modal-content">
+              <img src="${deal.image}" alt="${deal.name}" style="width: 100%; border-radius: 8px; margin-bottom: 16px;">
+              <p><strong>위치:</strong> ${deal.location}</p>
+              <p><strong>거리:</strong> ${deal.distance}km</p>
+              <p><strong>평점:</strong> ⭐ ${deal.rating} (${deal.reviewCount.toLocaleString()}개 리뷰)</p>
+              <p><strong>체크인:</strong> ${deal.checkInTime}</p>
+              <p><strong>체크아웃:</strong> ${deal.checkOutTime}</p>
+              <div class="deal-price mt-4">
+                <span class="deal-original-price">${deal.originalPrice.toLocaleString()}원</span>
+                <span class="deal-discounted-price">${deal.discountedPrice.toLocaleString()}원</span>
+                <span class="deal-badge">${deal.discountRate}% 할인</span>
+              </div>
+              <div class="amenities-list">
+                ${deal.amenities.map(a => `<span class="amenity-tag">${a}</span>`).join('')}
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-secondary" onclick="closeModal()">닫기</button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+    }
+
+    // Settings Modal
+    function showSettingsModal() {
+      const modalHTML = `
+        <div class="modal-overlay" onclick="closeModal(event)">
+          <div class="modal">
+            <div class="modal-header">
+              <h2 class="modal-title">설정</h2>
+              <button class="modal-close" onclick="closeModal()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+            <div class="modal-content">
+              <div class="settings-section">
+                <label class="settings-label">검색 반경 (km)</label>
+                <input type="range" id="searchRadius" class="form-input" 
+                       min="1" max="50" value="${settings.searchRadius}"
+                       oninput="document.getElementById('radiusValue').textContent = this.value">
+                <p style="margin-top: 8px;">현재: <span id="radiusValue">${settings.searchRadius}</span>km</p>
+              </div>
+              <div class="settings-section">
+                <label class="settings-label">알림 받기</label>
+                <div class="checkbox-group">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="notificationsEnabled" class="checkbox-input" 
+                           ${settings.notificationsEnabled ? 'checked' : ''}>
+                    <span>푸시 알림 활성화</span>
+                  </label>
+                </div>
+              </div>
+              <div class="settings-section">
+                <label class="settings-label">선호 숙소 타입</label>
+                <div class="checkbox-group">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="preferHotel" class="checkbox-input" 
+                           ${settings.preferredTypes.hotel ? 'checked' : ''}>
+                    <span>호텔</span>
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="preferPension" class="checkbox-input" 
+                           ${settings.preferredTypes.pension ? 'checked' : ''}>
+                    <span>펜션</span>
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="preferMotel" class="checkbox-input" 
+                           ${settings.preferredTypes.motel ? 'checked' : ''}>
+                    <span>모텔</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-secondary" onclick="closeModal()">취소</button>
+              <button class="btn btn-primary" onclick="saveSettings()">저장</button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+    }
+
+    function saveSettings() {
+      settings.searchRadius = parseInt(document.getElementById('searchRadius').value);
+      settings.notificationsEnabled = document.getElementById('notificationsEnabled').checked;
+      settings.preferredTypes.hotel = document.getElementById('preferHotel').checked;
+      settings.preferredTypes.pension = document.getElementById('preferPension').checked;
+      settings.preferredTypes.motel = document.getElementById('preferMotel').checked;
+      
+      localStorage.setItem('settings', JSON.stringify(settings));
+      closeModal();
+      showToast('설정이 저장되었습니다', 'success');
+      updateUserProfile();
+    }
+
+    // Notifications Modal
+    function showNotificationsModal() {
+      const modalHTML = `
+        <div class="modal-overlay" onclick="closeModal(event)">
+          <div class="modal">
+            <div class="modal-header">
+              <h2 class="modal-title">알림</h2>
+              <button class="modal-close" onclick="closeModal()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+            <div class="modal-content" style="padding: 0;">
+              ${notifications.length === 0 ? 
+                '<p class="text-center" style="padding: 40px;">알림이 없습니다</p>' :
+                notifications.map(n => `
+                  <div class="notification-item ${!n.read ? 'unread' : ''}" 
+                       onclick="markAsRead('${n.id}')">
+                    <div class="notification-title">${n.title}</div>
+                    <div class="notification-message">${n.message}</div>
+                    <div class="notification-meta">
+                      ${n.dealName} · ${n.price.toLocaleString()}원 (${n.discount}% 할인) · ${n.distance}km
+                    </div>
+                  </div>
+                `).join('')
+              }
+            </div>
+            ${notifications.length > 0 ? `
+              <div class="modal-footer">
+                <button class="btn btn-danger" onclick="clearAllNotifications()">모두 삭제</button>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      `;
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+    }
+
+    function markAsRead(id) {
+      notifications = notifications.map(n => n.id === id ? { ...n, read: true } : n);
+      updateNotificationBadge();
+    }
+
+    function clearAllNotifications() {
+      if (!confirm('모든 알림을 삭제하시겠습니까?')) return;
+      notifications = [];
+      closeModal();
+      showToast('모든 알림을 삭제했습니다', 'success');
+      updateNotificationBadge();
+    }
+
+    // Modal Management
+    function closeModal(event) {
+      if (event && event.target !== event.currentTarget) return;
+      const overlay = document.querySelector('.modal-overlay');
+      if (overlay) overlay.remove();
+    }
+
+    // Toast
+    function showToast(message, type = 'success') {
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      document.getElementById('toastContainer').appendChild(toast);
+      
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    // Close modal on ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+  </script>
+</body>
+</html>

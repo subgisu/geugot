@@ -1,0 +1,192 @@
+@import './fonts.css';
+@import './tailwind.css';
+@import './theme.css';
+
+/* Adaptive Booking Mode Animations */
+@keyframes shake-red {
+  0%, 100% { 
+    background-color: #fee; 
+    transform: translateX(0); 
+  }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes fade-gray {
+  0%, 100% { background-color: #f5f5f5; }
+  50% { background-color: #ddd; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes reveal {
+  from { 
+    opacity: 0.3; 
+    transform: translateY(-10px);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(55, 136, 216, 0.1); }
+  50% { box-shadow: 0 0 0 8px rgba(55, 136, 216, 0.05); }
+}
+
+@keyframes shake-hint {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
+}
+
+/* Calendar Cell States */
+.calendar-cell {
+  transition: all 0.2s ease;
+}
+
+.calendar-cell.drop-invalid {
+  animation: shake-red 0.3s ease-in-out;
+}
+
+.calendar-cell.drop-past {
+  animation: fade-gray 0.5s ease-in-out;
+  cursor: not-allowed;
+}
+
+.calendar-cell.drop-target-valid {
+  border: 2px solid #48bb78 !important;
+  background-color: #f0fff4 !important;
+  cursor: copy;
+  position: relative;
+}
+
+.calendar-cell.drop-target-valid::after {
+  content: '✓';
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  color: #48bb78;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.calendar-cell.drop-target-invalid {
+  border: 2px solid #f56565 !important;
+  background-color: #fff5f5 !important;
+  cursor: not-allowed;
+  position: relative;
+}
+
+.calendar-cell.drop-target-invalid::after {
+  content: '✗';
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  color: #f56565;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.calendar-cell.available-hint {
+  position: relative;
+}
+
+.calendar-cell.available-hint::before {
+  content: '';
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 8px;
+  height: 8px;
+  background-color: #48bb78;
+  border-radius: 50%;
+  box-shadow: 0 0 4px rgba(72, 187, 120, 0.5);
+}
+
+/* Room Card States */
+.room-card {
+  transition: all 0.3s ease;
+}
+
+.room-card.filtered-out {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.room-card.filtered-in {
+  opacity: 1;
+}
+
+.room-card.filtered-in.drag-disabled {
+  cursor: default;
+}
+
+.room-card.reveal {
+  animation: reveal 0.3s ease-out;
+}
+
+.room-card.shake-hint {
+  animation: shake-hint 0.5s ease-in-out;
+}
+
+/* Dragging Mode */
+.calendar.dragging-mode .calendar-cell {
+  transition: all 0.2s ease;
+}
+
+/* Event Styles */
+.fc-event.fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+/* Mobile Touch Optimization */
+.calendar-cell {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Weekend & Holiday Styles */
+.calendar-cell.sunday {
+  background-color: #fff5f5;
+}
+
+.calendar-cell.saturday {
+  background-color: #f0f9ff;
+}
+
+.calendar-cell.holiday {
+  border: 2px solid #fc8181 !important;
+  position: relative;
+}
+
+.calendar-cell.holiday::before {
+  content: '🎉';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  font-size: 12px;
+}
+
+/* Loading States */
+button.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+/* Input Error States */
+.input-error {
+  border-color: #f56565;
+}
+
+.error-message {
+  color: #e53e3e;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
